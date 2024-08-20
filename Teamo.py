@@ -9,7 +9,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 
 from load_prompts import contextualize_q_prompt, get_qa_prompt
 from load_database import setup_docs
-from single_round import status_detection, strategy_selection
+from single_round import status_detection, strategy_selection, stage_dict
 from utils import get_session_history
 
 st.set_page_config(page_title="项目式学习助教", page_icon="🧑‍🏫")
@@ -97,7 +97,7 @@ class CustomChatbot:
 
     def check_for_inactivity(self, chain):
         current_time = time.time()
-        if "last_active_time" in st.session_state and (current_time - st.session_state.last_active_time > 10):
+        if "last_active_time" in st.session_state and (current_time - st.session_state.last_active_time > stage_dict[st.session_state.stage_id]["wait_time"]):
             st.session_state.last_active_time = current_time  # Reset timer
             with st.chat_message("assistant"):
                 st_cb = StreamHandler(st.empty())
