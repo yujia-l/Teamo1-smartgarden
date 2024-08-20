@@ -99,6 +99,14 @@ class CustomChatbot:
         current_time = time.time()
         if "last_active_time" in st.session_state and (current_time - st.session_state.last_active_time > stage_dict[st.session_state.stage_id]["wait_time"]):
             st.session_state.last_active_time = current_time  # Reset timer
+            st.session_state.state_ids.append(1)
+            # get the strategies and make a selection
+            strategy_selection_output = strategy_selection(st.session_state.messages, st.session_state.state_ids)
+            urge_state_id = strategy_selection_output.urge_state_id
+            best_strategy_id = strategy_selection_output.best_strategy_id
+
+            chain = self.setup_chain(st.session_state.stage_id, urge_state_id, best_strategy_id, st.session_state.student_type)
+
             with st.chat_message("assistant"):
                 st_cb = StreamHandler(st.empty())
                 result = chain.invoke(
