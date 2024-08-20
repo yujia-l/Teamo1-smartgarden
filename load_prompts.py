@@ -32,7 +32,6 @@ def get_system_prompt(stage_id, urge_state_id, best_strategy_id, student_type):
     每个阶段开始前,你应该主动提问,发布本阶段的任务目标,根据学生的回答进行引导.
     整体过程用中文,以更适合中学生的语气跟学生进行交流,回答尽量像真人教师一样,不要过于冗长。
     交流时可以适当使用emoji增强跟学生之间的交流.整体交流语气和风格是活泼、积极、鼓舞人心的.
-
     {TutorialPrompt[stage_id]},
     请解决学生当前的{state_dict[urge_state_id]["name"]}问题状态，使用策略{strategy_dict[best_strategy_id]["name"]}，{strategy_dict[best_strategy_id]["description"]}。
     语言风格的示例如下：{strategy_dict[best_strategy_id]["example"][int(student_type)]}
@@ -47,14 +46,11 @@ def get_qa_prompt(stage_id, urge_state_id, best_strategy_id, student_type):
             ]
         )
 
-StageName = {"发现问题", "信息收集", "定义问题", "创想方案", "方案评估", "方案实践"}
-
-StageWaitTime = {20, 20, 20, 20, 20, 20}
-
 TutorialPrompt = {}
 TutorialPrompt[0] = '''
     为了更好地与学生建立联系并且了解学生的基本情况,在所有任务开始前你应该做一个自我介绍,然后介绍本次项目主题并且询问该学生是否有相关主题背景知识或者做项目的经验. 
-    在项目开始前有让学生做一个问卷,在你完成介绍后,让学生将之前问卷的得分告诉你。
+    比如你可以说：“首先，我想了解下你之前有关注对水资源相关的浪费问题吗？在我们开始之前，你已经完成了一个问卷。你可以简单介绍下自己,然后告诉我你之前的问卷得分么？这样我可以更好地支持你完成本次的创意问题解决任务！ 🌊💡”
+    在项目开始前已经让学生做一个问卷,在你完成介绍后,让学生将之前问卷的得分告诉你。
     \n\n
     {context}
 '''
