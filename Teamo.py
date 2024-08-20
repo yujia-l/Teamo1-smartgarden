@@ -17,7 +17,7 @@ st.header('创意问题解决导师')
 # st.write('欢迎使用项目式学习助教！')
 
 print("********** Starting the chatbot **********")
-session_id = "990801"
+session_id = "990802"
 
 class CustomChatbot:
     def __init__(self):
