@@ -49,7 +49,7 @@ def get_status_detect_prompt(stage_id, state_ids):
 
     如果进入下一阶段，学生的状态为“开始”，更新并输出学生状态列表state_ids=[0]。
 
-    根据学生提供的问卷结果和历史对话信息，判断学生类型，返回参数 student_type，主动型则输出 1，被动型则输出 0
+    根据历史记录中学生提供的问卷结果，判断学生类型，返回参数 student_type，如果问卷得分高于20分则输出 1，低于20分则输出 0
     '''
 
 def get_strategy_desciption(state_ids):
