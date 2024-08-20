@@ -9,6 +9,6 @@ SQLAlchemy==2.0.31
 streamlit==1.36.0
 duckduckgo-search==6.2.1
 pypdf==4.3.0
-fastembed==0.1.3
+fastembed
 docarray==0.40.0
 validators==0.33.0
