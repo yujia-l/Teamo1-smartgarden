@@ -1,6 +1,7 @@
 __pycache__
 .devcontainer
 .vscode
+.streamlit
 legacy
 template_pages
 

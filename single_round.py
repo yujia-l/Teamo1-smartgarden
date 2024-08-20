@@ -1,8 +1,10 @@
+import os
+import json
 from pydantic import BaseModel
 from openai import OpenAI
-import json
+import streamlit as st
 
-client = OpenAI(api_key=open("./openai.key").read().strip())
+client = OpenAI(api_key=st.secrets['OPENAI_KEY'].strip())
 
 def idx_string_to_int(d):
     new_d = {}

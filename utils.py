@@ -19,7 +19,7 @@ store = {} # for conversational memory storage
 if os.path.exists("./openai.key"):
     os.environ["OPENAI_API_KEY"] = open("./openai.key").read().strip()
 else:
-    raise FileNotFoundError("Please add your OpenAI API key to continue.")
+    os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_KEY']
 
 #decorator
 def enable_chat_history(func):
