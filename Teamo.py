@@ -17,7 +17,7 @@ st.header('创意问题解决导师')
 # st.write('欢迎使用项目式学习助教！')
 
 print("********** Starting the chatbot **********")
-session_id = "999998"
+session_id = "999997"
 
 class CustomChatbot:
     def __init__(self):
@@ -100,6 +100,7 @@ class CustomChatbot:
         if "last_active_time" in st.session_state and (current_time - st.session_state.last_active_time > stage_dict[st.session_state.stage_id]["wait_time"]):
             st.session_state.last_active_time = current_time  # Reset timer
             st.session_state.state_ids.append(1)
+            print(st.session_state.state_ids)
             # get the strategies and make a selection
             strategy_selection_output = strategy_selection(st.session_state.messages, st.session_state.state_ids)
             urge_state_id = strategy_selection_output.urge_state_id
