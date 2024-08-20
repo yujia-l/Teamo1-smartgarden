@@ -12,7 +12,7 @@ from single_round import state_dict, stage_dict
 
 logger = get_logger('Langchain-Chatbot')
 
-session_id = '990802'
+session_id = key=random.randint(100000,999999)
 store = {} # for conversational memory storage
 
 # set the openai api key as the environment variable

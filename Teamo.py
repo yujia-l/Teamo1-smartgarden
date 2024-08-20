@@ -10,14 +10,14 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from load_prompts import contextualize_q_prompt, get_qa_prompt
 from load_database import setup_docs
 from single_round import status_detection, strategy_selection, stage_dict
-from utils import get_session_history
+from utils import get_session_history, session_id
 
 st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
 st.header('创意问题解决导师')
 # st.write('欢迎使用项目式学习助教！')
 
 print("********** Starting the chatbot **********")
-session_id = "990802"
+
 
 class CustomChatbot:
     def __init__(self):
