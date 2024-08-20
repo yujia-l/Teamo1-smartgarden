@@ -10,7 +10,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from load_prompts import contextualize_q_prompt, get_qa_prompt
 from load_database import setup_docs
 from single_round import status_detection, strategy_selection, stage_dict
-from utils import get_session_history, session_id
+from utils import get_session_history
 
 st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
 st.header('创意问题解决导师')
@@ -22,6 +22,7 @@ print("********** Starting the chatbot **********")
 class CustomChatbot:
     def __init__(self):
         utils.sync_st_session()
+        self.session_id = utils.configure_user_session()
         self.info = utils.configure_info()
         self.llm = utils.configure_llm()
         
@@ -79,7 +80,7 @@ class CustomChatbot:
                         "input": user_query,
                         },
                     config = {
-                        "configurable": {"session_id": session_id}, 
+                        "configurable": {"session_id": self.session_id}, 
                         "callbacks": [st_cb]
                         }
                 )
@@ -112,7 +113,7 @@ class CustomChatbot:
                 st_cb = StreamHandler(st.empty())
                 result = chain.invoke(
                     {"input": "当前学生没有说话"},
-                    config={"configurable": {"session_id": session_id}, "callbacks": [st_cb]}
+                    config={"configurable": {"session_id": self.session_id}, "callbacks": [st_cb]}
                 )
                 response = result["answer"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
