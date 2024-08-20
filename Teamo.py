@@ -12,9 +12,9 @@ from load_database import setup_docs
 from single_round import status_detection, strategy_selection, stage_dict
 from utils import get_session_history
 
-st.set_page_config(page_title="项目式学习助教", page_icon="🧑‍🏫")
-st.header('项目式学习助教')
-st.write('欢迎使用项目式学习助教！')
+st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
+st.header('创意问题解决导师')
+# st.write('欢迎使用项目式学习助教！')
 
 print("********** Starting the chatbot **********")
 session_id = "999999"
