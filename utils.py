@@ -38,8 +38,10 @@ def enable_chat_history(func):
 
         # to show chat history on ui
         if "messages" not in st.session_state:
-            st.session_state["messages"] = [{"role": "assistant", "content": "你好！😊 我是M，你的创意问题解决项目导师,也是你们的学习伙伴!今天我们将一起开始一个以水资源为主题的项目式学习。这个项目将分为五个阶段，每个阶段我们都会深入探讨水资源相关的问题，并且最终形成一个方案。/n 首先，你对水资源的浪费问题有了解吗？或者你有见过类似的情况吗？在我们开始之前，你已经完成了一个问卷。你可以简单介绍下自己,然后告诉我你之前的问卷得分么？这样我可以更好地帮助你们制定适合的任务！ 🌊💡"}]
-        
+            st.session_state["messages"] = [{"role": "assistant", "content": "你好！😊 我是M，你的创意问题解决项目导师,也是你们的学习伙伴!今天我们将一起开始一个以水资源为主题的项目式学习。这个项目将分为五个阶段，分别是“发现问题”、“信息搜集”、“定义问题”、“创想方案”和“方案评估“. 每个阶段我们都会深入探讨水资源相关的问题，并且最终形成一个方案。"}]
+            for msg in st.session_state["messages"]:
+                st.chat_message(msg["role"]).write(msg["content"])
+            st.session_state["messages"] = [{"role": "assistant", "content": "首先， 我想了解下你之前有关注对水资源相关的浪费问题吗？在我们开始之前，你已经完成了一个问卷。你可以简单介绍下自己,然后告诉我你之前的问卷得分么？这样我可以更好地支持你完成本次的创意问题解决任务！ 🌊💡"}]
         for msg in st.session_state["messages"]:
             st.chat_message(msg["role"]).write(msg["content"])
 

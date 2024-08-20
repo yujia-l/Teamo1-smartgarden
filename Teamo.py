@@ -102,7 +102,7 @@ class CustomChatbot:
             with st.chat_message("assistant"):
                 st_cb = StreamHandler(st.empty())
                 result = chain.invoke(
-                    {"input": "当前学生没有说话，请主动进行干预。"},
+                    {"input": "当前学生没有说话"},
                     config={"configurable": {"session_id": session_id}, "callbacks": [st_cb]}
                 )
                 response = result["answer"]
