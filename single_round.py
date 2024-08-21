@@ -73,33 +73,43 @@ def process_chat_history(chat_history):
         output += f'''{chat['role']}: {chat['content']}\n'''
     return output
 
-def status_detection(history, stage_id, state_ids) -> statusDectectionOutput:
-    history = process_chat_history(history)
+def query_openai(prompt, history, format):
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-2024-08-06",
         messages=[
-            {"role": "system", "content": get_status_detect_prompt(stage_id, state_ids)},
+            {"role": "system", "content": prompt},
             {"role": "user", "content": history},
         ],
-        response_format = statusDectectionOutput,
+        response_format = format,
     )
-    structured_output = completion.choices[0].message.parsed
-    return structured_output
+    output = completion.choices[0].message.parsed
+    return output
 
-def strategy_selection(history, state_ids) -> strategySelectionOutput:
+def status_detection(history, stage_id, state_ids, retry=3) -> statusDectectionOutput:
     history = process_chat_history(history)
-    completion = client.beta.chat.completions.parse(
-        model="gpt-4o-2024-08-06",
-        messages=[
-            {"role": "system", "content": get_strategy_select_prompt(state_ids)},
-            {"role": "user", "content": history},
-        ],
-        response_format = strategySelectionOutput,
-    )
-    structured_output = completion.choices[0].message.parsed
-    return structured_output
+    prompt = get_status_detect_prompt(stage_id, state_ids)
+    while retry > 0:
+        try:
+            output = query_openai(prompt, history, statusDectectionOutput)
+            break
+        except Exception as e:
+            retry -= 1
+            if retry == 0:
+                raise e
+    return output
 
-
+def strategy_selection(history, state_ids, retry=3) -> strategySelectionOutput:
+    history = process_chat_history(history)
+    prompt = get_strategy_select_prompt(state_ids)
+    while retry > 0:
+        try:
+            output = query_openai(prompt, history, strategySelectionOutput)
+            break
+        except Exception as e:
+            retry -= 1
+            if retry == 0:
+                raise e
+    return output
 
 
 StageChangePrompt = {}
