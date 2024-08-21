@@ -13,6 +13,7 @@ from single_round import state_dict, stage_dict
 logger = get_logger('Langchain-Chatbot')
 
 store = {} # for conversational memory storage
+SESSION_ID = None
 
 # set the openai api key as the environment variable
 if os.path.exists("./openai.key"):
@@ -77,11 +78,19 @@ def display_msg(msg, author):
     st.chat_message(author).write(msg)
 
 def configure_user_session():
+    global SESSION_ID
     # let user input a number as the session id
     session_id = st.sidebar.text_input("Session ID", key="SESSION_ID")
     if not session_id:
-        # if the user does not input a session id, generate a random one
-        session_id = random.randint(100000,999999)
+        if SESSION_ID is None:
+            # if the user does not input a session id, generate a random one
+            session_id = random.randint(100000,999999)
+            SESSION_ID = session_id
+        else:
+            session_id = SESSION_ID
+    else:
+        SESSION_ID = session_id
+
     st.sidebar.write(f"Current Session ID: {session_id}")
     return session_id
 
