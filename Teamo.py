@@ -87,7 +87,8 @@ class Teamo:
             if strategy_selection_output.best_strategy_id in valid_strategy_ids(st.session_state.state_ids):
                 best_strategy_id = strategy_selection_output.best_strategy_id
             else:
-                best_strategy_id = random.choice(valid_strategy_ids([urge_state_id])) if valid_strategy_ids([urge_state_id]) is not [] else 0
+                valid_strategies = valid_strategy_ids([urge_state_id])
+                best_strategy_id = random.choice(valid_strategies) if valid_strategies != [] else 0
 
             write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.strategy_history)
 
@@ -135,8 +136,8 @@ class Teamo:
             if strategy_selection_output.best_strategy_id in valid_strategy_ids(st.session_state.state_ids):
                 best_strategy_id = strategy_selection_output.best_strategy_id
             else:
-                best_strategy_id = random.choice(valid_strategy_ids([urge_state_id])) if valid_strategy_ids([urge_state_id]) is not [] else 0
-
+                valid_strategies = valid_strategy_ids([urge_state_id])
+                best_strategy_id = random.choice(valid_strategies) if valid_strategies != [] else 0
             write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.strategy_history)
 
             chain = self.setup_chain(st.session_state.stage_id, urge_state_id, best_strategy_id, st.session_state.student_type)
