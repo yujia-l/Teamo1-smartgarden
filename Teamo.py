@@ -10,7 +10,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 
 from load_prompts import contextualize_q_prompt, get_qa_prompt
 from load_database import setup_docs
-from single_round import status_detection, strategy_selection, stage_dict
+from single_round import status_detection, strategy_selection, valid_strategy_ids, stage_dict
 from utils import get_session_history, write_session_status
 
 st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
@@ -20,7 +20,7 @@ st.header('创意问题解决导师')
 print("********** Starting the chatbot **********")
 
 
-class CustomChatbot:
+class Teamo:
     def __init__(self):
         utils.sync_st_session()
         self.session_id = utils.configure_user_session()
@@ -63,6 +63,7 @@ class CustomChatbot:
 
             # preprocess the user query to detect the status
             status_detection_output = status_detection(st.session_state.messages, st.session_state.stage_id, st.session_state.state_ids)
+            
             # validate the status
             if status_detection_output.stage_id in range(7):
                 st.session_state.stage_id = status_detection_output.stage_id 
@@ -75,15 +76,18 @@ class CustomChatbot:
 
             # get the strategies and make a selection
             strategy_selection_output = strategy_selection(st.session_state.messages, st.session_state.state_ids)
-            # validate the urge state id
+            
+            # validate the urge state id, if not in the state ids, randomly select one
             if strategy_selection_output.urge_state_id in st.session_state.state_ids:
                 urge_state_id = strategy_selection_output.urge_state_id
             else:
                 urge_state_id = random.choice(st.session_state.state_ids)
 
-            # validate the best strategy id
-            if strategy_selection_output.best_strategy_id in range(22):
+            # validate the best strategy id, if not in the valid strategy ids, randomly select one from the urge state
+            if strategy_selection_output.best_strategy_id in valid_strategy_ids(st.session_state.state_ids):
                 best_strategy_id = strategy_selection_output.best_strategy_id
+            else:
+                best_strategy_id = random.choice(valid_strategy_ids([urge_state_id]))
 
             write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.strategy_history)
 
@@ -120,14 +124,18 @@ class CustomChatbot:
             
             # get the strategies and make a selection
             strategy_selection_output = strategy_selection(st.session_state.messages, st.session_state.state_ids)
-            # validate the urge state id
+            
+            # validate the urge state id, if not in the state ids, randomly select one
             if strategy_selection_output.urge_state_id in st.session_state.state_ids:
                 urge_state_id = strategy_selection_output.urge_state_id
             else:
                 urge_state_id = random.choice(st.session_state.state_ids)
-            # validate the best strategy id
-            if strategy_selection_output.best_strategy_id in range(22):
+            
+            # validate the best strategy id, if not in the valid strategy ids, randomly select one from the urge state
+            if strategy_selection_output.best_strategy_id in valid_strategy_ids(st.session_state.state_ids):
                 best_strategy_id = strategy_selection_output.best_strategy_id
+            else:
+                best_strategy_id = random.choice(valid_strategy_ids([urge_state_id]))
 
             write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.strategy_history)
 
@@ -146,5 +154,5 @@ class CustomChatbot:
         return False
 
 if __name__ == "__main__":
-    obj = CustomChatbot()
+    obj = Teamo()
     obj.main()

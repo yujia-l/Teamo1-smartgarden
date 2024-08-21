@@ -53,6 +53,14 @@ def get_status_detect_prompt(stage_id, state_ids):
     根据历史记录中学生提供的问卷结果，判断学生类型，返回参数 student_type，如果问卷得分高于20分则输出 1，低于20分则输出 0
     '''
 
+def valid_strategy_ids(state_ids):
+    valid_strategies = set()
+    for state in state_ids:
+        for strategy in state_dict[state]['strategy_id']:
+            valid_strategies.add(strategy)
+    return list(valid_strategies)
+
+
 def get_strategy_desciption(state_ids):
     strategy_description = ''''''
     for state in state_ids:

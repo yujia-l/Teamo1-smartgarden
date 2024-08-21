@@ -84,6 +84,8 @@ def get_session_status(session_id: str):
     return status_store[session_id]
 
 def write_session_status(session_id: str, stage_id: int, state_ids: list, student_type: int, strategy_history: list):
+    if session_id not in status_store.keys():
+        status_store[session_id] = {}
     status_store[session_id]["stage_id"] = stage_id
     status_store[session_id]["state_ids"] = state_ids
     status_store[session_id]["student_type"] = student_type
