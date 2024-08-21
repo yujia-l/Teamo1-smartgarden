@@ -12,7 +12,8 @@ from single_round import state_dict, stage_dict
 
 logger = get_logger('Langchain-Chatbot')
 
-store = {} # for conversational memory storage
+history_store = {} # for conversational history storage
+status_store = {} # for conversational status storage
 
 # set the openai api key as the environment variable
 if os.path.exists("./openai.key"):
@@ -42,27 +43,55 @@ def enable_chat_history(func):
             st.chat_message(msg["role"]).write(msg["content"])
 
         # to access the global variable
-        if "stage_id" not in st.session_state:
-            st.session_state["stage_id"] = 0
-        if "state_ids" not in st.session_state:
-            st.session_state["state_ids"] = []
-        if "student_type" not in st.session_state:
-            st.session_state["student_type"] = 0
-        if "strategy_history" not in st.session_state:
-            st.session_state["strategy_history"] = []
+        if "session_id" in st.session_state:
+            status = get_session_status(st.session_state["session_id"])
+            if not status:
+                status_store[st.session_state["session_id"]] = {
+                    "stage_id": st.session_state["stage_id"],
+                    "state_ids": st.session_state["state_ids"],
+                    "student_type": st.session_state["student_type"],
+                    "strategy_history": st.session_state["strategy_history"]
+                }
+            else:
+                st.session_state["stage_id"] = status["stage_id"]
+                st.session_state["state_ids"] = status["state_ids"]
+                st.session_state["student_type"] = status["student_type"]
+                st.session_state["strategy_history"] = status["strategy_history"]
+
+        else:
+            if "stage_id" not in st.session_state:
+                st.session_state["stage_id"] = 0
+            if "state_ids" not in st.session_state:
+                st.session_state["state_ids"] = []
+            if "student_type" not in st.session_state:
+                st.session_state["student_type"] = 0
+            if "strategy_history" not in st.session_state:
+                st.session_state["strategy_history"] = []
+            st.session_state["loaded"] = False
 
     def execute(*args, **kwargs):
         func(*args, **kwargs)
     return execute
 
 def get_session_history(session_id: str):
-    if session_id not in store:
-        store[session_id] = ChatMessageHistory()
-    return store[session_id]
+    if session_id not in history_store:
+        history_store[session_id] = ChatMessageHistory()
+    return history_store[session_id]
+
+def get_session_status(session_id: str):
+    if session_id not in status_store:
+        return False
+    return status_store[session_id]
+
+def write_session_status(session_id: str, stage_id: int, state_ids: list, student_type: int, strategy_history: list):
+    status_store[session_id]["stage_id"] = stage_id
+    status_store[session_id]["state_ids"] = state_ids
+    status_store[session_id]["student_type"] = student_type
+    status_store[session_id]["strategy_history"] = strategy_history
 
 def access_global_var(func):
     def execute(*args, **kwargs):
-        global store
+        global history_store
         return func(*args, **kwargs)
     return execute
 
@@ -82,7 +111,7 @@ def configure_user_session():
     if not session_id:
         if "session_id" not in st.session_state:
             # if the user does not input a session id, generate a random one
-            session_id = random.randint(100000,999999)
+            session_id = str(random.randint(100000,999999))
             st.session_state["session_id"] = session_id
         else:
             session_id = st.session_state["session_id"]

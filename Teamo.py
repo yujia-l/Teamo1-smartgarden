@@ -1,5 +1,6 @@
 import time
 import utils
+import random
 import streamlit as st
 from streaming import StreamHandler
 
@@ -10,7 +11,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from load_prompts import contextualize_q_prompt, get_qa_prompt
 from load_database import setup_docs
 from single_round import status_detection, strategy_selection, stage_dict
-from utils import get_session_history
+from utils import get_session_history, write_session_status
 
 st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
 st.header('创意问题解决导师')
@@ -62,14 +63,29 @@ class CustomChatbot:
 
             # preprocess the user query to detect the status
             status_detection_output = status_detection(st.session_state.messages, st.session_state.stage_id, st.session_state.state_ids)
-            st.session_state.stage_id = status_detection_output.stage_id
-            st.session_state.state_ids = status_detection_output.state_ids
-            st.session_state.student_type = status_detection_output.student_type
+            # validate the status
+            if status_detection_output.stage_id in range(7):
+                st.session_state.stage_id = status_detection_output.stage_id 
+            # validate the state ids
+            valid_state_ids = [state_id for state_id in status_detection_output.state_ids if state_id in range(27)]
+            st.session_state.state_ids = valid_state_ids
+            # validate the student type
+            if status_detection_output.student_type in range(2):
+                st.session_state.student_type = status_detection_output.student_type
 
             # get the strategies and make a selection
             strategy_selection_output = strategy_selection(st.session_state.messages, st.session_state.state_ids)
-            urge_state_id = strategy_selection_output.urge_state_id
-            best_strategy_id = strategy_selection_output.best_strategy_id
+            # validate the urge state id
+            if strategy_selection_output.urge_state_id in st.session_state.state_ids:
+                urge_state_id = strategy_selection_output.urge_state_id
+            else:
+                urge_state_id = random.choice(st.session_state.state_ids)
+
+            # validate the best strategy id
+            if strategy_selection_output.best_strategy_id in range(22):
+                best_strategy_id = strategy_selection_output.best_strategy_id
+
+            write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.strategy_history)
 
             chain = self.setup_chain(st.session_state.stage_id, urge_state_id, best_strategy_id, st.session_state.student_type)
 
@@ -101,11 +117,19 @@ class CustomChatbot:
         if "last_active_time" in st.session_state and (current_time - st.session_state.last_active_time > stage_dict[st.session_state.stage_id]["wait_time"]):
             st.session_state.last_active_time = current_time  # Reset timer
             st.session_state.state_ids.append(1)
-            print(st.session_state.state_ids)
+            
             # get the strategies and make a selection
             strategy_selection_output = strategy_selection(st.session_state.messages, st.session_state.state_ids)
-            urge_state_id = strategy_selection_output.urge_state_id
-            best_strategy_id = strategy_selection_output.best_strategy_id
+            # validate the urge state id
+            if strategy_selection_output.urge_state_id in st.session_state.state_ids:
+                urge_state_id = strategy_selection_output.urge_state_id
+            else:
+                urge_state_id = random.choice(st.session_state.state_ids)
+            # validate the best strategy id
+            if strategy_selection_output.best_strategy_id in range(22):
+                best_strategy_id = strategy_selection_output.best_strategy_id
+
+            write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.strategy_history)
 
             chain = self.setup_chain(st.session_state.stage_id, urge_state_id, best_strategy_id, st.session_state.student_type)
 
