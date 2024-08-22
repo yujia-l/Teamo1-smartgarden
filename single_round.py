@@ -46,7 +46,7 @@ def get_status_detect_prompt(stage_id, state_ids):
     如果没有进入下一阶段，学生的状态可能为：
     {get_state_desciption()} 
 
-    学生之前的状态列表为{state_ids}，请根据新的对话记录，更新并输出学生状态列表 state_ids。
+    学生之前的状态列表为{state_ids}，删除所有0和1，并请根据新的对话记录，更新并输出学生状态列表 state_ids。
 
     如果进入下一阶段，学生的状态为“开始”，更新并输出学生状态列表state_ids=[0]。
 

@@ -129,6 +129,7 @@ def configure_user_session():
 def configure_info():
     st.sidebar.markdown("### Information")
     st.sidebar.write(f"阶段: {stage_dict[st.session_state.stage_id]["name"]}")
+    st.sidebar.progress(float(st.session_state.stage_id)/6, "阶段进度")
     if "state_ids" in st.session_state:
         for state_id in st.session_state["state_ids"]:
             st.sidebar.write(f"状态: {state_dict[state_id]["name"]}")
