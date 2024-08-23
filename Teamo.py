@@ -26,6 +26,7 @@ class Teamo:
         self.session_id = utils.configure_user_session()
         self.info = utils.configure_info()
         self.llm = utils.configure_llm()
+        utils.configure_download()
         
         # Set up the prompt template
         retriever = setup_docs()

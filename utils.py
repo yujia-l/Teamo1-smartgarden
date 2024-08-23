@@ -1,4 +1,5 @@
 import os
+import json
 import openai
 import random
 import streamlit as st
@@ -141,8 +142,20 @@ def configure_info():
     else:
         st.sidebar.write(f"状态: {state_dict[state_id]["name"]}")
     
-    
-
+def configure_download():
+    messages = st.session_state["messages"]
+    if len(messages) > 2:
+        export = []
+        for msg in messages:
+            export.append({"role": msg["role"], "content": msg["content"]})
+        # convert the export list to json
+        export = json.dumps(export, indent=4, ensure_ascii=False)
+        st.sidebar.download_button(
+            label="Save Chat History",
+            data=export,
+            file_name=f"chat_history_{st.session_state["session_id"]}.json",
+            mime="application/json"
+        )
 
 def choose_custom_openai_key():
     openai_api_key = st.sidebar.text_input(
