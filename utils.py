@@ -70,7 +70,6 @@ def enable_chat_history(func):
                 st.session_state["student_type"] = 0
             if "strategy_history" not in st.session_state:
                 st.session_state["strategy_history"] = []
-            st.session_state["loaded"] = False
 
     def execute(*args, **kwargs):
         func(*args, **kwargs)
