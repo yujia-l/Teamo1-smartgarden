@@ -1,7 +1,6 @@
 import time
 import utils
 import random
-import threading
 import streamlit as st
 from streamlit_mic_recorder import speech_to_text
 from streaming import StreamHandler
