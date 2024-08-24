@@ -1,6 +1,7 @@
 import time
 import utils
 import random
+import threading
 import streamlit as st
 from streamlit_mic_recorder import speech_to_text
 from streaming import StreamHandler
@@ -9,14 +10,14 @@ from langchain.chains import create_history_aware_retriever, create_retrieval_ch
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
-from load_prompts import contextualize_q_prompt, get_qa_prompt
-from load_database import setup_docs
-from single_round import status_detection, strategy_selection, valid_strategy_ids, stage_dict
-from utils import get_session_history, write_session_status
-
 st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
 st.header('创意问题解决导师')
-# st.write('欢迎使用项目式学习助教！')
+
+from load_prompts import contextualize_q_prompt, get_qa_prompt
+from load_database import setup_docs
+from structured_query import status_detection, strategy_selection, valid_strategy_ids, stage_dict
+from utils import get_session_history, write_session_status, write_google_sheet
+
 
 print("********** Starting the chatbot **********")
 
@@ -93,6 +94,7 @@ class Teamo:
         if user_query:
             st.session_state.last_active_time = time.time()  # Reset the timer on new user input
             utils.display_msg(user_query, 'user')
+            write_google_sheet(self.session_id)
 
             # preprocess the user query to detect the status
             status_detection_output = status_detection(st.session_state.messages, st.session_state.stage_id, st.session_state.state_ids)
@@ -140,13 +142,13 @@ class Teamo:
                 )
                 response = result["answer"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
-
-                st.rerun()  # Rerun the app to update the chat
+                st.write(response)
+                write_google_sheet(self.session_id)
+                st.rerun()
 
         # Check for inactivity
         while not user_query:
             st.session_state.inactive = self.check_for_inactivity(chain)
-            # TODO: Delete if wish to check for inactivity continuously
             if st.session_state.inactive:
                 break
 
@@ -184,6 +186,7 @@ class Teamo:
                 response = result["answer"]
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 st.write(response)
+                write_google_sheet(self.session_id)
             return True
         return False
 
