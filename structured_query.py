@@ -122,7 +122,7 @@ def strategy_selection(history, state_ids, retry=3) -> strategySelectionOutput:
 
 StageChangePrompt = {}
 StageChangePrompt[0] = '''
-    当学生搜集完所有问题的关键信息后,询问学生是否进入下一阶段,当学生说确认则进入下一阶段.
+    当你搜集完学生的关键信息后，进入下一阶段。
     \n\n
     {context}
 '''

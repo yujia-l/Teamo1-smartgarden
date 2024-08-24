@@ -5,15 +5,12 @@ import streamlit as st
 from streamlit_mic_recorder import speech_to_text
 from streaming import StreamHandler
 
-from langchain.chains import create_history_aware_retriever, create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
 st.header('创意问题解决导师')
 
-from load_prompts import contextualize_q_prompt, get_qa_prompt
-from load_database import setup_docs
+from load_prompts import get_qa_prompt
 from structured_query import status_detection, strategy_selection, valid_strategy_ids, stage_dict
 from utils import get_session_history, write_session_status, write_google_sheet
 
@@ -31,29 +28,18 @@ class Teamo:
         self.session_id = utils.configure_user_session()
         self.info = utils.configure_info()
         self.llm = utils.configure_llm()
-        utils.configure_download()
-        
-        # Set up the prompt template
-        retriever = setup_docs()
-        self.history_aware_retriever = create_history_aware_retriever(
-            self.llm, retriever, contextualize_q_prompt
-        )
-        print("Finished setting up the history-aware retriever with document loaded.")
+        utils.configure_download() 
 
     @utils.access_global_var
     def setup_chain(self, stage_id, urge_state_id, best_strategy_id, student_type):
-        self.question_answer_chain = create_stuff_documents_chain(self.llm, get_qa_prompt(stage_id, urge_state_id, best_strategy_id, student_type))
-        self.rag_chain = create_retrieval_chain(self.history_aware_retriever, self.question_answer_chain)
-
-        self.conversational_rag_chain = RunnableWithMessageHistory(
-            self.rag_chain,
+        self.chain = get_qa_prompt(stage_id, urge_state_id, best_strategy_id, student_type) | self.llm
+        self.conversational_chain = RunnableWithMessageHistory(
+            self.chain,
             get_session_history,
             input_messages_key="input",
             history_messages_key="chat_history",
-            output_messages_key="answer",
         )
-
-        return self.conversational_rag_chain
+        return self.conversational_chain
     
     @utils.enable_chat_history
     def main(self):
@@ -66,7 +52,7 @@ class Teamo:
         audio_input = speech_to_text(
             language='zh-CN',
             start_prompt="🎙️ 语音输入",
-            stop_prompt="✅ 输入完毕",
+            stop_prompt="🎙️ 输入完毕",
             just_once=True,
             use_container_width=True,
             callback=stt_callback,
@@ -139,9 +125,8 @@ class Teamo:
                         "callbacks": [st_cb]
                         }
                 )
-                response = result["answer"]
+                response = result.content
                 st.session_state.messages.append({"role": "assistant", "content": response})
-                st.write(response)
                 write_google_sheet(self.session_id)
                 st.rerun()
 
@@ -182,7 +167,7 @@ class Teamo:
                     {"input": "当前学生没有说话"},
                     config={"configurable": {"session_id": self.session_id}, "callbacks": [st_cb]}
                 )
-                response = result["answer"]
+                response = result.content
                 st.session_state.messages.append({"role": "assistant", "content": response})
                 st.write(response)
                 write_google_sheet(self.session_id)
