@@ -14,7 +14,7 @@ st.header('创意问题解决导师')
 
 from load_prompts import contextualize_q_prompt, get_qa_prompt
 from load_database import setup_docs
-from single_round import status_detection, strategy_selection, valid_strategy_ids, stage_dict
+from structured_query import status_detection, strategy_selection, valid_strategy_ids, stage_dict
 from utils import get_session_history, write_session_status, write_google_sheet
 
 

@@ -9,7 +9,7 @@ from streamlit.logger import get_logger
 from langchain_openai import ChatOpenAI
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_community.chat_message_histories import ChatMessageHistory
-from single_round import state_dict, stage_dict
+from structured_query import state_dict, stage_dict
 from streamlit_gsheets import GSheetsConnection
 
 logger = get_logger('Langchain-Chatbot')
@@ -94,7 +94,6 @@ def write_session_status(session_id: str, stage_id: int, state_ids: list, studen
     status_store[session_id]["state_ids"] = state_ids
     status_store[session_id]["student_type"] = student_type
     status_store[session_id]["strategy_history"] = strategy_history
-
 
 def write_google_sheet(session_id: str):
     conn = st.connection("gsheets", type=GSheetsConnection)

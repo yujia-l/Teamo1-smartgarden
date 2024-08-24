@@ -1,5 +1,5 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from single_round import state_dict, strategy_dict
+from structured_query import state_dict, strategy_dict
 
 contextualize_q_system_prompt = (
     "Given a chat history and the latest user question "
