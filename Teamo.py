@@ -2,6 +2,7 @@ import time
 import utils
 import random
 import streamlit as st
+from streamlit_mic_recorder import speech_to_text
 from streaming import StreamHandler
 
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
@@ -19,6 +20,10 @@ st.header('创意问题解决导师')
 
 print("********** Starting the chatbot **********")
 
+def stt_callback():
+    if "stt_output" not in st.session_state:
+        st.session_state.stt_output = ""
+    st.write(st.session_state.stt_output)
 
 class Teamo:
     def __init__(self):
@@ -57,7 +62,34 @@ class Teamo:
         chain = self.setup_chain(0, 0, 0, 0)
 
         user_query = st.chat_input(placeholder="欢迎提出任何问题！")
-        
+    
+        audio_input = speech_to_text(
+            language='zh-CN',
+            start_prompt="🎙️ 语音输入",
+            stop_prompt="🎙️ 输入完毕",
+            just_once=True,
+            use_container_width=True,
+            callback=stt_callback,
+            args=(),
+            kwargs={},
+            key=None
+        )
+
+        # Insert the audio input into the chat input box
+        js = f"""
+            <script>
+                function insertText(dummy_var_to_force_repeat_execution) {{
+                    var chatInput = parent.document.querySelector('textarea[data-testid="stChatInputTextArea"]');
+                    var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+                    nativeInputValueSetter.call(chatInput, "{audio_input if audio_input else ""}");
+                    var event = new Event('input', {{ bubbles: true}});
+                    chatInput.dispatchEvent(event);
+                }}
+                insertText({len(st.session_state.messages)});
+            </script>
+            """
+        st.components.v1.html(js)
+
         if user_query:
             st.session_state.last_active_time = time.time()  # Reset the timer on new user input
             utils.display_msg(user_query, 'user')
