@@ -66,7 +66,7 @@ class Teamo:
         audio_input = speech_to_text(
             language='zh-CN',
             start_prompt="🎙️ 语音输入",
-            stop_prompt="🎙️ 输入完毕",
+            stop_prompt="✅ 输入完毕",
             just_once=True,
             use_container_width=True,
             callback=stt_callback,
