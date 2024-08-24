@@ -12,3 +12,4 @@ pypdf==4.3.0
 fastembed
 docarray==0.40.0
 validators==0.33.0
+st-gsheets-connection

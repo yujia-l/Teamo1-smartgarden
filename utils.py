@@ -2,14 +2,15 @@ import os
 import json
 import openai
 import random
+import pandas as pd
 import streamlit as st
 from datetime import datetime
 from streamlit.logger import get_logger
 from langchain_openai import ChatOpenAI
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
-from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from single_round import state_dict, stage_dict
+from streamlit_gsheets import GSheetsConnection
 
 logger = get_logger('Langchain-Chatbot')
 
@@ -94,6 +95,19 @@ def write_session_status(session_id: str, stage_id: int, state_ids: list, studen
     status_store[session_id]["student_type"] = student_type
     status_store[session_id]["strategy_history"] = strategy_history
 
+
+def write_google_sheet(session_id: str):
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    if "df" not in st.session_state:
+        try:
+            df = conn.read(worksheet=session_id)
+        except:
+            df = conn.create(worksheet=session_id, data=pd.DataFrame(columns=["idx", "timestamp", "role", "content", "stage_id", "state_ids", "student_type", "strategy_history"]))
+        st.session_state["df"] = df
+    df = st.session_state["df"]
+    df.loc[len(df)] = {"idx": len(df), "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "role": st.session_state["messages"][-1]["role"], "content": st.session_state["messages"][-1]["content"], "stage_id": st.session_state["stage_id"], "state_ids": st.session_state["state_ids"], "student_type": st.session_state["student_type"], "strategy_history": st.session_state["strategy_history"]}
+    conn.update(worksheet=session_id, data=df)
+
 def access_global_var(func):
     def execute(*args, **kwargs):
         global history_store
@@ -121,7 +135,7 @@ def configure_user_session():
         else:
             session_id = st.session_state["session_id"]
     else:
-        st.session_state["session_id"]  = session_id
+        st.session_state["session_id"] = session_id
 
     st.sidebar.write(f"Current Session ID: {session_id}")
     return session_id
@@ -144,7 +158,7 @@ def configure_info():
     
 def configure_download():
     messages = st.session_state["messages"]
-    if len(messages) > 2:
+    if len(messages) > 2 and "session_id" in st.session_state:
         export = []
         for msg in messages:
             export.append({"role": msg["role"], "content": msg["content"]})
