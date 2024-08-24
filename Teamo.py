@@ -4,16 +4,14 @@ import random
 import streamlit as st
 from streamlit_mic_recorder import speech_to_text
 from streaming import StreamHandler
-
 from langchain_core.runnables.history import RunnableWithMessageHistory
-
-st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
-st.header('创意问题解决导师')
 
 from load_prompts import get_qa_prompt
 from structured_query import status_detection, strategy_selection, valid_strategy_ids, stage_dict
 from utils import get_session_history, write_session_status, write_google_sheet
 
+st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
+st.header('创意问题解决导师')
 
 print("********** Starting the chatbot **********")
 
@@ -48,7 +46,7 @@ class Teamo:
         chain = self.setup_chain(0, 0, 0, 0)
 
         user_query = st.chat_input(placeholder="欢迎提出任何问题！")
-    
+
         audio_input = speech_to_text(
             language='zh-CN',
             start_prompt="🎙️ 语音输入",
@@ -127,8 +125,7 @@ class Teamo:
                 )
                 response = result.content
                 st.session_state.messages.append({"role": "assistant", "content": response})
-                write_google_sheet(self.session_id)
-                st.rerun()
+            write_google_sheet(self.session_id)
 
         # Check for inactivity
         while not user_query:
@@ -169,8 +166,7 @@ class Teamo:
                 )
                 response = result.content
                 st.session_state.messages.append({"role": "assistant", "content": response})
-                st.write(response)
-                write_google_sheet(self.session_id)
+            write_google_sheet(self.session_id)
             return True
         return False
 
