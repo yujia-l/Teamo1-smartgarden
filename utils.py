@@ -43,7 +43,7 @@ def enable_chat_history(func):
             st.session_state["messages"] = [{"role": "assistant", "content": "你好！😊 我是M，你的创意问题解决项目导师,也是你们的学习伙伴!今天我们将一起开始一个低碳校园为主题的项目式学习。这个项目将分为六个阶段，分别是“发现问题”、“信息搜集”、“定义问题”、“创想方案”和“方案评估“. 每个阶段我们都会深入探讨低碳校园相关的问题，并且最终形成一个能够通过一个装置进行设计落地的创意解决方案."}]
         for msg in st.session_state["messages"]:
             if msg["role"] == "assistant":
-                st.chat_message(msg["role"], avatar="./assets/ta_f.png").write(msg["content"])
+                st.chat_message(msg["role"]).write(msg["content"])
             else:
                 st.chat_message(msg["role"]).write(msg["content"])
 
@@ -126,7 +126,7 @@ def display_msg(msg, author):
         author (str): author of the message -user/assistant
     """
     st.session_state.messages.append({"role": author, "content": msg})
-    st.chat_message(author, avatar="./assets/ta_f.png").write(msg) if author == "assistant" else st.chat_message(author).write(msg)
+    st.chat_message(author).write(msg) if author == "assistant" else st.chat_message(author).write(msg)
 
 def configure_user_session():
     # let user input a number as the session id

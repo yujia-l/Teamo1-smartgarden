@@ -113,7 +113,7 @@ class Teamo:
 
             chain = self.setup_chain(st.session_state.stage_id, st.session_state.urge_state_id, st.session_state.best_strategy_id, st.session_state.student_type)
 
-            with st.chat_message("assistant", avatar="./assets/ta_f.png"):
+            with st.chat_message("assistant"):
                 st_cb = StreamHandler(st.empty())
                 result = chain.invoke(
                     input = {
@@ -160,7 +160,7 @@ class Teamo:
 
             chain = self.setup_chain(st.session_state.stage_id, st.session_state.urge_state_id, st.session_state.best_strategy_id, st.session_state.student_type)
 
-            with st.chat_message("assistant", avatar="./assets/ta_f.png"):
+            with st.chat_message("assistant"):
                 st_cb = StreamHandler(st.empty())
                 result = chain.invoke(
                     {"input": "当前学生没有说话"},
