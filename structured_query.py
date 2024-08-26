@@ -37,21 +37,34 @@ def get_state_desciption():
     return state_description
 
 def get_status_detect_prompt(stage_id, state_ids):
-    return f'''
-    当前处于第{stage_id}阶段-{stage_dict[stage_id]["name"]}。当前阶段的定义是{stage_dict[stage_id]["description"]}。
-    下一阶段是{stage_dict[stage_id+1]["name"]}，定义为{stage_dict[stage_id+1]["description"]}。
-    {StageChangePrompt[stage_id]}
-    结合已经发生的对话信息，判断是否进入下一阶段。如果维持当前阶段，输出参数 stage_id 为 {stage_id}，否则输出参数 stage_id 为 {stage_id+1}。
+    if stage_id == 6:
+        return f'''
+        当前处于第{stage_id}阶段-{stage_dict[stage_id]["name"]}。当前阶段的定义是{stage_dict[stage_id]["description"]}。
+        输出参数 stage_id 为 {stage_id}。
 
-    如果没有进入下一阶段，学生的状态可能为：
-    {get_state_desciption()} 
+        学生的状态可能为：
+        {get_state_desciption()} 
 
-    学生之前的状态列表为{state_ids}，删除所有0和1，并请根据新的对话记录，更新并输出学生状态列表 state_ids。
+        学生之前的状态列表为{state_ids}，删除所有0和1，并请根据新的对话记录，更新并输出学生状态列表 state_ids。
 
-    如果进入下一阶段，学生的状态为“开始”，更新并输出学生状态列表state_ids=[0]。
+        根据历史记录中学生提供的问卷结果，判断学生类型，返回参数 student_type，如果问卷得分高于20分则输出 1，低于20分则输出 0
+        '''
+    else:
+        return f'''
+        当前处于第{stage_id}阶段-{stage_dict[stage_id]["name"]}。当前阶段的定义是{stage_dict[stage_id]["description"]}。
+        下一阶段是{stage_dict[stage_id+1]["name"]}，定义为{stage_dict[stage_id+1]["description"]}。
+        {StageChangePrompt[stage_id]}
+        结合已经发生的对话信息，判断是否进入下一阶段。如果维持当前阶段，输出参数 stage_id 为 {stage_id}，否则输出参数 stage_id 为 {stage_id+1}。
 
-    根据历史记录中学生提供的问卷结果，判断学生类型，返回参数 student_type，如果问卷得分高于20分则输出 1，低于20分则输出 0
-    '''
+        如果没有进入下一阶段，学生的状态可能为：
+        {get_state_desciption()} 
+
+        学生之前的状态列表为{state_ids}，删除所有0和1，并请根据新的对话记录，更新并输出学生状态列表 state_ids。
+
+        如果进入下一阶段，学生的状态为“开始”，更新并输出学生状态列表state_ids=[0]。
+
+        根据历史记录中学生提供的问卷结果，判断学生类型，返回参数 student_type，如果问卷得分高于20分则输出 1，低于20分则输出 0
+        '''
 
 def valid_strategy_ids(state_ids):
     valid_strategies = set()
