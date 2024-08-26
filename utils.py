@@ -55,13 +55,15 @@ def enable_chat_history(func):
                     "stage_id": st.session_state["stage_id"],
                     "state_ids": st.session_state["state_ids"],
                     "student_type": st.session_state["student_type"],
-                    "strategy_history": st.session_state["strategy_history"]
+                    "urge_state_id": st.session_state["urge_state_id"],
+                    "best_strategy_id": st.session_state["best_strategy_id"]
                 }
             else:
                 st.session_state["stage_id"] = status["stage_id"]
                 st.session_state["state_ids"] = status["state_ids"]
                 st.session_state["student_type"] = status["student_type"]
-                st.session_state["strategy_history"] = status["strategy_history"]
+                st.session_state["urge_state_id"] = status["urge_state_id"]
+                st.session_state["best_strategy_id"] = status["best_strategy_id"]
 
         else:
             if "stage_id" not in st.session_state:
@@ -70,8 +72,10 @@ def enable_chat_history(func):
                 st.session_state["state_ids"] = []
             if "student_type" not in st.session_state:
                 st.session_state["student_type"] = 0
-            if "strategy_history" not in st.session_state:
-                st.session_state["strategy_history"] = []
+            if "urge_state_id" not in st.session_state:
+                st.session_state["urge_state_id"] = 0
+            if "best_strategy_id" not in st.session_state: 
+                st.session_state["best_strategy_id"] = 0
 
     def execute(*args, **kwargs):
         func(*args, **kwargs)
@@ -87,13 +91,14 @@ def get_session_status(session_id: str):
         return False
     return status_store[session_id]
 
-def write_session_status(session_id: str, stage_id: int, state_ids: list, student_type: int, strategy_history: list):
+def write_session_status(session_id: str, stage_id: int, state_ids: list, student_type: int, urge_state_id: int, best_strategy_id: int):
     if session_id not in status_store.keys():
         status_store[session_id] = {}
     status_store[session_id]["stage_id"] = stage_id
     status_store[session_id]["state_ids"] = state_ids
     status_store[session_id]["student_type"] = student_type
-    status_store[session_id]["strategy_history"] = strategy_history
+    status_store[session_id]["urge_state_id"] = urge_state_id
+    status_store[session_id]["best_strategy_id"] = best_strategy_id
 
 def write_google_sheet(session_id: str):
     conn = st.connection("gsheets", type=GSheetsConnection)
@@ -101,12 +106,12 @@ def write_google_sheet(session_id: str):
         try:
             df = conn.read(worksheet=session_id)
         except:
-            df = conn.create(worksheet=session_id, data=pd.DataFrame(columns=["idx", "timestamp", "role", "content", "stage_id", "state_ids", "student_type", "strategy_history"]))
+            df = conn.create(worksheet=session_id, data=pd.DataFrame(columns=["idx", "timestamp", "role", "content", "stage_id", "state_ids", "student_type", "urge_state_id", "best_strategy_id"]))
         st.session_state["df"] = df
     df = st.session_state["df"]
-    df.loc[len(df)] = {"idx": len(df), "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "role": st.session_state["messages"][-1]["role"], "content": st.session_state["messages"][-1]["content"], "stage_id": st.session_state["stage_id"], "state_ids": st.session_state["state_ids"], "student_type": st.session_state["student_type"], "strategy_history": st.session_state["strategy_history"]}
+    df.loc[len(df)] = {"idx": len(df), "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "role": st.session_state["messages"][-1]["role"], "content": st.session_state["messages"][-1]["content"], "stage_id": st.session_state["stage_id"], "state_ids": st.session_state["state_ids"], "student_type": st.session_state["student_type"], "urge_state_id": st.session_state["urge_state_id"], "best_strategy_id": st.session_state["best_strategy_id"]}
     conn.update(worksheet=session_id, data=df)
-
+    
 def access_global_var(func):
     def execute(*args, **kwargs):
         global history_store

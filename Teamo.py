@@ -11,7 +11,7 @@ from structured_query import status_detection, strategy_selection, valid_strateg
 from utils import get_session_history, write_session_status, write_google_sheet
 
 st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
-st.header('创意问题解决导师-低碳校园')
+st.header('创意问题解决导师-智能家居')
 
 print("********** Starting the chatbot **********")
 
@@ -97,20 +97,20 @@ class Teamo:
             
             # validate the urge state id, if not in the state ids, randomly select one
             if strategy_selection_output.urge_state_id in st.session_state.state_ids:
-                urge_state_id = strategy_selection_output.urge_state_id
+                st.session_state.urge_state_id = strategy_selection_output.urge_state_id
             else:
-                urge_state_id = random.choice(st.session_state.state_ids)
+                st.session_state.urge_state_id = random.choice(st.session_state.state_ids)
 
             # validate the best strategy id, if not in the valid strategy ids, randomly select one from the urge state
             if strategy_selection_output.best_strategy_id in valid_strategy_ids(st.session_state.state_ids):
-                best_strategy_id = strategy_selection_output.best_strategy_id
+                st.session_state.best_strategy_id = strategy_selection_output.best_strategy_id
             else:
-                valid_strategies = valid_strategy_ids([urge_state_id])
-                best_strategy_id = random.choice(valid_strategies) if valid_strategies != [] else 0
+                valid_strategies = valid_strategy_ids([st.session_state.urge_state_id])
+                st.session_state.best_strategy_id = random.choice(valid_strategies) if valid_strategies != [] else 0
 
-            write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.strategy_history)
+            write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.urge_state_id, st.session_state.best_strategy_id)
 
-            chain = self.setup_chain(st.session_state.stage_id, urge_state_id, best_strategy_id, st.session_state.student_type)
+            chain = self.setup_chain(st.session_state.stage_id, st.session_state.urge_state_id, st.session_state.best_strategy_id, st.session_state.student_type)
 
             with st.chat_message("assistant", avatar="./assets/ta_f.png"):
                 st_cb = StreamHandler(st.empty())
@@ -144,19 +144,19 @@ class Teamo:
             
             # validate the urge state id, if not in the state ids, randomly select one
             if strategy_selection_output.urge_state_id in st.session_state.state_ids:
-                urge_state_id = strategy_selection_output.urge_state_id
+                st.session_state.urge_state_id = strategy_selection_output.urge_state_id
             else:
-                urge_state_id = random.choice(st.session_state.state_ids)
+                st.session_state.urge_state_id = random.choice(st.session_state.state_ids)
             
             # validate the best strategy id, if not in the valid strategy ids, randomly select one from the urge state
             if strategy_selection_output.best_strategy_id in valid_strategy_ids(st.session_state.state_ids):
-                best_strategy_id = strategy_selection_output.best_strategy_id
+                st.session_state.best_strategy_id = strategy_selection_output.best_strategy_id
             else:
-                valid_strategies = valid_strategy_ids([urge_state_id])
-                best_strategy_id = random.choice(valid_strategies) if valid_strategies != [] else 0
-            write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.strategy_history)
+                valid_strategies = valid_strategy_ids([st.session_state.urge_state_id])
+                st.session_state.best_strategy_id = random.choice(valid_strategies) if valid_strategies != [] else 0
+            write_session_status(self.session_id, st.session_state.stage_id, st.session_state.state_ids, st.session_state.student_type, st.session_state.urge_state_id, st.session_state.best_strategy_id)
 
-            chain = self.setup_chain(st.session_state.stage_id, urge_state_id, best_strategy_id, st.session_state.student_type)
+            chain = self.setup_chain(st.session_state.stage_id, st.session_state.urge_state_id, st.session_state.best_strategy_id, st.session_state.student_type)
 
             with st.chat_message("assistant", avatar="./assets/ta_f.png"):
                 st_cb = StreamHandler(st.empty())
