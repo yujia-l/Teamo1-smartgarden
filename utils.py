@@ -102,7 +102,7 @@ def write_session_status(session_id: str, stage_id: int, state_ids: list, studen
 
 def write_google_sheet(session_id: str):
     conn = st.connection("gsheets", type=GSheetsConnection)
-    if "df" not in st.session_state:
+    if "df" not in st.session_state and st.session_state["messages"][-1]["role"]=="user":
         try:
             df = conn.read(worksheet=session_id)
         except:
@@ -111,7 +111,7 @@ def write_google_sheet(session_id: str):
     df = st.session_state["df"]
     df.loc[len(df)] = {"idx": len(df), "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "role": st.session_state["messages"][-1]["role"], "content": st.session_state["messages"][-1]["content"], "stage_id": st.session_state["stage_id"], "state_ids": st.session_state["state_ids"], "student_type": st.session_state["student_type"], "urge_state_id": st.session_state["urge_state_id"], "best_strategy_id": st.session_state["best_strategy_id"]}
     conn.update(worksheet=session_id, data=df)
-    
+
 def access_global_var(func):
     def execute(*args, **kwargs):
         global history_store
