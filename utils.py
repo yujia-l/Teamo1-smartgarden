@@ -102,7 +102,7 @@ def write_session_status(session_id: str, stage_id: int, state_ids: list, studen
 
 def write_google_sheet(session_id: str):
     conn = st.connection("gsheets", type=GSheetsConnection)
-    if "df" not in st.session_state and st.session_state["messages"][-1]["role"]=="user":
+    if "df" not in st.session_state:
         try:
             df = conn.read(worksheet=session_id)
         except:
