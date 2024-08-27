@@ -78,7 +78,6 @@ class Teamo:
             st.session_state.last_active_time = time.time()  # Reset the timer on new user input
             utils.display_msg(user_query, 'user')
             write_google_sheet(self.session_id)
-            print("1")
 
             # preprocess the user query to detect the status
             status_detection_output = status_detection(st.session_state.messages, st.session_state.stage_id, st.session_state.state_ids)
@@ -127,7 +126,6 @@ class Teamo:
                 response = result.content
                 st.session_state.messages.append({"role": "assistant", "content": response})
             write_google_sheet(self.session_id)
-            print("2")
 
         # Check for inactivity
         while not user_query:
@@ -169,7 +167,6 @@ class Teamo:
                 response = result.content
                 st.session_state.messages.append({"role": "assistant", "content": response})
             write_google_sheet(self.session_id)
-            print("3")
             return True
         return False
 
