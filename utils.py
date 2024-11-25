@@ -40,7 +40,7 @@ def enable_chat_history(func):
 
         # to show chat history on ui
         if "messages" not in st.session_state:
-            st.session_state["messages"] = [{"role": "assistant", "content": "你好！我是Mentigo，你的创意问题解决项目导师,也是你们的学习伙伴!今天我们将一起开始一个以“智慧菜园”为主题的项目式学习。这个项目将分为六个阶段，分别是“发现问题”、“定义问题”、“创想方案”和“方案评估”、“方案设计”和“技术实践”. 每个阶段我们都会深入探讨菜园日常管理和植物照料相关的问题，并且最终形成一个能够通过一个智能装置进行设计落地的创意解决方案。\n可以尝试输入“你好”给我打个招呼吧!"}]
+            st.session_state["messages"] = [{"role": "assistant", "content": "你好！我是Mentigo，你的创意问题解决项目导师,也是你们的学习伙伴!今天我们将一起开始一个以“智慧菜园”为主题的项目式学习。这个项目将分为六个阶段，分别是“发现问题”、“定义问题”、“创想方案”和“方案评估”、“方案设计”和“技术实践”. 每个阶段我们都会深入探讨菜园日常管理和植物照料相关的问题，并且最终形成一个能够通过一个智能装置进行设计落地的创意解决方案。😊可以尝试输入“你好”给我打个招呼吧!"}]
         for msg in st.session_state["messages"]:
             if msg["role"] == "assistant":
                 st.chat_message(msg["role"]).write(msg["content"])
