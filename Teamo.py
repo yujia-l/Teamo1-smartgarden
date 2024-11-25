@@ -11,7 +11,7 @@ from structured_query import status_detection, strategy_selection, valid_strateg
 from utils import get_session_history, write_session_status, write_google_sheet
 
 st.set_page_config(page_title="创意问题解决导师", page_icon="🧑‍🏫")
-st.header('创意问题解决导师-低碳校园')
+st.header('创意问题解决导师-智能菜园')
 
 print("********** Starting the chatbot **********")
 
