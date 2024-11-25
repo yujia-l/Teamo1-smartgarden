@@ -4,7 +4,7 @@
         "description": "初始阶段。",
         "example": "学生提供问卷结果。",
         "tutor_prompt": null,
-        "wait_time": 40
+        "wait_time": 10
     },
     "1": {
         "name": "发现问题",
