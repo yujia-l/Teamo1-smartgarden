@@ -141,6 +141,31 @@ def configure_user_session():
             session_id = st.session_state["session_id"]
     else:
         st.session_state["session_id"] = session_id
+    
+    # get the session status from the google sheet
+    if "df" not in st.session_state:
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        print("0: ", session_id)
+        try:
+            print("0.1: ", session_id)
+            df = conn.read(worksheet=session_id)
+        except:
+            print("0.2: ", session_id)
+            df = conn.create(worksheet=session_id, data=pd.DataFrame(columns=["idx", "timestamp", "role", "content", "stage_id", "state_ids", "student_type", "urge_state_id", "best_strategy_id"]))
+        st.session_state["df"] = df
+        df = st.session_state["df"]
+        print(df)
+        st.session_state["stage_id"] = df.iloc[-1]["stage_id"]
+        print("1: ", df.iloc[-1]["stage_id"])
+        st.session_state["state_ids"] = df.iloc[-1]["state_ids"]
+        print("2: ", st.session_state["state_ids"])
+        st.session_state["student_type"] = df.iloc[-1]["student_type"]
+        print("3: ", df.iloc[-1]["student_type"])
+        st.session_state["urge_state_id"] = df.iloc[-1]["urge_state_id"]
+        print("4: ", df.iloc[-1]["urge_state_id"])
+        st.session_state["best_strategy_id"] = df.iloc[-1]["best_strategy_id"]
+        print("5: ", df.iloc[-1]["best_strategy_id"])
+        st.session_state["messages"] = [{"role": df.iloc[i]["role"], "content": df.iloc[i]["content"]} for i in range(len(df))]
 
     st.sidebar.write(f"Current Session ID: {session_id}")
     return session_id
