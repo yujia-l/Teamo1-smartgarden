@@ -153,6 +153,7 @@ def configure_user_session():
         st.session_state["df"] = df
         df = st.session_state["df"]
         st.session_state["stage_id"] = df.iloc[-1]["stage_id"]
+        st.sidebar.write(f"stage id: {df.iloc[-1]["stage_id"]}")
         st.session_state["state_ids"] = df.iloc[-1]["state_ids"]
         st.session_state["student_type"] = df.iloc[-1]["student_type"]
         st.session_state["urge_state_id"] = df.iloc[-1]["urge_state_id"]
