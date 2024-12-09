@@ -153,7 +153,6 @@ def configure_user_session():
         st.session_state["df"] = df
         df = st.session_state["df"]
         st.session_state["stage_id"] = df.iloc[-1]["stage_id"]
-        st.sidebar.write(f"stage id: {df.iloc[-1]["stage_id"]}")
         st.session_state["state_ids"] = df.iloc[-1]["state_ids"]
         st.session_state["student_type"] = df.iloc[-1]["student_type"]
         st.session_state["urge_state_id"] = df.iloc[-1]["urge_state_id"]
@@ -170,11 +169,11 @@ def configure_info():
     if "state_ids" in st.session_state:
         for state_id in st.session_state["state_ids"]:
             st.sidebar.write(f"状态: {state_dict[state_id]["name"]}")
-            b1, b2 = st.sidebar.columns(2)
-            with b1:
-                button_1 = st.button("👍", key=random.randint(100000,999999))
-            with b2:
-                button_2 = st.button("👎", key=random.randint(100000,999999))
+            # b1, b2 = st.sidebar.columns(2)
+            # with b1:
+            #     button_1 = st.button("👍", key=random.randint(100000,999999))
+            # with b2:
+            #     button_2 = st.button("👎", key=random.randint(100000,999999))
             
     else:
         st.sidebar.write(f"状态: {state_dict[state_id]["name"]}")
