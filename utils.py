@@ -150,8 +150,7 @@ def configure_user_session():
             print("0.1: ", session_id)
             df = conn.read(worksheet=session_id)
         except:
-            print("0.2: ", session_id)
-            df = conn.create(worksheet=session_id, data=pd.DataFrame(columns=["idx", "timestamp", "role", "content", "stage_id", "state_ids", "student_type", "urge_state_id", "best_strategy_id"]))
+            pass
         st.session_state["df"] = df
         df = st.session_state["df"]
         print(df)
