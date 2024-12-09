@@ -166,17 +166,17 @@ def configure_info():
     st.sidebar.markdown("### Information")
     st.sidebar.write(f"阶段: {stage_dict[st.session_state.stage_id]["name"]}")
     st.sidebar.progress(float(st.session_state.stage_id)/6, "阶段进度")
-    if "state_ids" in st.session_state:
-        for state_id in st.session_state["state_ids"]:
-            st.sidebar.write(f"状态: {state_dict[state_id]["name"]}")
-            # b1, b2 = st.sidebar.columns(2)
-            # with b1:
-            #     button_1 = st.button("👍", key=random.randint(100000,999999))
-            # with b2:
-            #     button_2 = st.button("👎", key=random.randint(100000,999999))
+    # if "state_ids" in st.session_state:
+    #     for state_id in st.session_state["state_ids"]:
+    #         st.sidebar.write(f"状态: {state_dict[state_id]["name"]}")
+    #         # b1, b2 = st.sidebar.columns(2)
+    #         # with b1:
+    #         #     button_1 = st.button("👍", key=random.randint(100000,999999))
+    #         # with b2:
+    #         #     button_2 = st.button("👎", key=random.randint(100000,999999))
             
-    else:
-        st.sidebar.write(f"状态: {state_dict[state_id]["name"]}")
+    # else:
+    #     st.sidebar.write(f"状态: {state_dict[state_id]["name"]}")
     
 def configure_download():
     messages = st.session_state["messages"]
